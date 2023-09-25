@@ -3,7 +3,7 @@ const cors = require("cors");
 
 const express = require("express");
 
-const httpStatus = require("httpStatus");
+const httpStatus = require("http-status");
 
 const logger = require("morgan");
 
@@ -19,7 +19,7 @@ app.set("port", process.env.PORT || 3000);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.checkout("/", (req_, res) => {
+app.get("/api", (_req, res) => {
   res.status(httpStatus.OK).json({
     data: {
       message: "The API is working perfectly",
@@ -34,15 +34,11 @@ app.use((err, _req, res, next) => {
   }
 
   err.statusCode &&
-    res.status(err.statusCode || 500).json({
-      message: err.message || "Something Went Wrong",
-    });
+    res
+      .status(err.statusCode || 500)
+      .json({ message: err.message || "Something Went Wrong" });
 });
 
-app.listen(
-  app.get("port", () => {
-    console.log(
-      `listening on port ${app.get("port")} in ${app.get("env")} mode`
-    );
-  })
-);
+app.listen(app.get("port"), () => {
+  console.log(`listening on port ${app.get("port")} in ${app.get("env")} mode`);
+});

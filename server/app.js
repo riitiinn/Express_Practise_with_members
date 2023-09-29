@@ -5,9 +5,15 @@ const express = require("express");
 
 const httpStatus = require("http-status");
 
-const logger = require("morgan");
+const logger = require("morgan"); 
+
+
 
 require("dotenv").config({ path: `${__dirname}/../.env` });
+
+const connectToDatabase = require("./config/connector")
+connectToDatabase()
+
 
 const app = express();
 
@@ -27,18 +33,24 @@ app.get("/api", (_req, res) => {
   });
 });
 
+app.use("/api/v1/public",require("./routes/v1/public/index"))
+
 app.use((err, _req, res, next) => {
   if (!err) {
     next();
     return;
   }
 
-  err.statusCode &&
+  err.statusCode ||
     res
       .status(err.statusCode || 500)
       .json({ message: err.message || "Something Went Wrong" });
 });
 
+
+
 app.listen(app.get("port"), () => {
   console.log(`listening on port ${app.get("port")} in ${app.get("env")} mode`);
 });
+ 
+
